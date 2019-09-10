@@ -1,0 +1,106 @@
+{% extends "layout.html" %}
+{% block content %}
+    <a href={{ url_for("index") }} style="text-decoration: none;">
+        <h1 class="mt-3"><span class="text-primary">UCI</span> <span class="badge badge-info">RegChecker</span></h1>
+    </a>
+    <div>
+        <div class="mt-5">
+            <p>
+                Enter a course code (e.g., 34190) below and the script will check if the course is OPEN or not.
+                If it's not OPEN (FULL, NEW ONLY, WAITL), you can submit your email address and an email would be
+                sent when the course OPENs.
+            </p>
+        </div>
+
+        <div class="mt-5">
+            <form method="POST" action="">
+                {{ check_form.hidden_tag() }}
+                <fieldset class="form-group">
+                    {{ check_form.code.label(class="form-control-label") }}
+                    {{ check_form.code(class="form-control form-control-lg") }}
+                </fieldset>
+                <div class="form-group">
+                    {{ check_form.submit_code(class="btn btn-outline-info") }}
+                </div>
+            </form>
+        </div>
+        
+        <div class="mt-5">
+            {% if course_data %}
+                {% if course_data|length > 1 %}
+                    <div class="list-group-item-primary row">
+                        <div class="col-sm">
+                            <p>Name</p>
+                        </div>
+                        <div class="col-sm">
+                            <p>Code</p>
+                        </div>
+                        <div class="col-sm">
+                            <p>Type</p>
+                        </div>
+                        <div class="col-sm">
+                            <p>Instructor</p>
+                        </div>
+                        <div class="col-sm">
+                            <strong>Status</strong>
+                        </div>
+                    </div>
+                    <div class="list-group-item-info row">
+                        <div class="col-sm">
+                            <p>{{ course_data[0] }}</p>
+                        </div>
+                        <div class="col-sm">
+                            <p>{{ course_data[1] }}</p>
+                        </div>
+                        <div class="col-sm">
+                            <p>{{ course_data[2] }}</p>
+                        </div>
+                        <div class="col-sm">
+                            <p>{{ course_data[3] }}</p>
+                        </div>
+                        <div class="col-sm">
+                            <strong>{{ course_data[4] }}</strong>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-danger" role="alert">
+                        <p>Failed to fetch course info, please check the course code and try again later.</p>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="mt-5" style = "animation: fadein 1s;">
+            {% if email_form and course_data and course_data|length > 1 and course_data[4] != "OPEN" %}
+                <form method="POST" action="" enctype="multipart/form-data">
+                    {{ email_form.hidden_tag() }}
+                    <fieldset class="form-group">
+                        {{ email_form.email.label(class="form-control-label") }}
+                        {{ email_form.email(class="form-control form-control-lg") }}
+                    </fieldset>
+                    <div class="form-group">
+                        {{ email_form.submit_email(class="btn btn-outline-info") }}
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mt-5">
+        {% with messages = get_flashed_messages(with_categories = true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="container fixed-bottom mb-5">
+        <p style="margin: 0;">UCI RegChecker Ver. 1.0</p>
+        <p style="margin: 0;">Developed by Xinchen Zhang</p>
+        <p>Contact / Bug report: xinchez4 at uci.edu</p>
+    </div>
+{% endblock %}
