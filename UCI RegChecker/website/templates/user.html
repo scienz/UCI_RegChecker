@@ -1,0 +1,117 @@
+{% extends "layout.html" %}
+{% block content %}
+    <a href={{ url_for("index") }} style="text-decoration: none;">
+        <h1 class="mt-3"><span class="text-primary">UCI</span> <span class="badge badge-info">RegChecker</span></h1>
+    </a>
+
+    <div>
+        <div class="mt-5">
+            <p>
+                Enter your email below and manage the courses you set to track.
+                For each email address, only three courses can be added.
+            </p>
+        </div>
+
+        <div class="mt-5">
+            {% if user_form %}
+                <form method="POST" action="">
+                    {{ user_form.hidden_tag() }}
+                    <fieldset class="form-group">
+                        {{ user_form.email.label(class="form-control-label") }}
+                        {{ user_form.email(class="form-control form-control-lg") }}
+                    </fieldset>
+                    <div class="form-group">
+                        {{ user_form.submit_email(class="btn btn-outline-info") }}
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mt-5">
+        {% if course_data_list %}
+            <div class="list-group-item-primary row">
+                <div class="col-sm">
+                    <p>Name</p>
+                </div>
+                <div class="col-sm">
+                    <p>Code</p>
+                </div>
+                <div class="col-sm">
+                    <p>Type</p>
+                </div>
+                <div class="col-sm">
+                    <p>Instructor</p>
+                </div>
+                <div class="col-sm">
+                    <strong>Status</strong>
+                </div>
+            </div>
+            {% for course_data in course_data_list %}
+                {% if course_data %}
+                    {% if course_data|length > 1 %}
+                        {% if loop.index0 % 2 == 0 %}
+                            {% set category = "info" %}
+                        {% else %}
+                            {% set category = "secondary" %}
+                        {% endif %}
+                        <div class="list-group-item-{{ category }} row">
+                            <div class="col-sm">
+                                <p>{{ course_data[0] }}</p>
+                            </div>
+                            <div class="col-sm">
+                                <p>{{ course_data[1] }}</p>
+                            </div>
+                            <div class="col-sm">
+                                <p>{{ course_data[2] }}</p>
+                            </div>
+                            <div class="col-sm">
+                                <p>{{ course_data[3] }}</p>
+                            </div>
+                            <div class="col-sm">
+                                <strong>{{ course_data[4] }}</strong>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-danger" role="alert">
+                            <p>Failed to fetch course info, please check the course code and try again later.</p>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    {% if drop_form %}
+        <div class="mt-5">
+            <p>
+                Go to <a href={{ url_for("reg_checker") }} class="badge badge-info">RegChecker</a> to add courses,
+                or you can choose to stop tracking a course by entering one of the course codes below: 
+            </p>
+            <form method="POST" action="">
+                {{ drop_form.hidden_tag() }}
+                <fieldset class="form-group">
+                    {{ drop_form.code(class="form-control form-control-lg") }}
+                </fieldset>
+                <div class="form-group">
+                    {{ drop_form.submit_code(class="btn btn-outline-info") }}
+                </div>
+            </form>
+        </div>
+    {% endif %}
+
+    <div class="mt-5">
+        {% with messages = get_flashed_messages(with_categories = true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                    <div class="mt-5">
+                        <p>Go to <a href={{ url_for("reg_checker") }} class="badge badge-info">RegChecker</a> to add courses.</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+{% endblock %}
