@@ -10,7 +10,7 @@ BASE_URL = "https://www.reg.uci.edu/perl/WebSoc"
 def getResultByDept(dept: str, courseNum: str) -> ():
     data = {
         "Submit" : "Display Web Results",
-        "YearTerm" : "2019-92",
+        "YearTerm" : "2020-03",
         "ShowComments" : "on",
         "ShowFinals" : "on",
         "Breadth" : "ANY",
@@ -30,20 +30,29 @@ def getResultByDept(dept: str, courseNum: str) -> ():
 def getResultByCode(courseCode: str):
     data = {
         "Submit" : "Display Web Results",
-        "YearTerm" : "2019-92",
+        "YearTerm" : "2020-03",
         "ShowComments" : "on",
         "ShowFinals" : "on",
         "Breadth" : "ANY",
         "Dept" : "ALL",
         "Division" : "ANY",
         "CourseCodes" : courseCode,
-        "ClassType" : "ALL"
+        "ClassType" : "ALL",
+        "FullCourses" : "ANY",
+        "FontSize" : 100,
+        "CancelledCourses" : "Exclude"
     }
+
+    headers = {
+        "Referer" : "https://www.reg.uci.edu/perl/WebSoc",
+        "User-Agent" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.18362"
+    }
+
     try:
-        request = requests.post(BASE_URL, data = data)
+        request = requests.post(BASE_URL, data = data, headers = headers, verify = False)
     except:
         print("Connection Failed")
-        return None
+        return None   
     return _getCourseInfo(request.text)
 
 
@@ -67,7 +76,7 @@ def _getCourseInfo(webpage: str) -> list:
                 code = ci.xpath("./td[1]")[0].text_content()
                 _type = ci.xpath("./td[2]")[0].text_content()
                 instructor = ci.xpath("./td[5]")[0].text_content()
-                status = ci.xpath("./td[17]")[0].text_content()
+                status = ci.xpath("./td[16]")[0].text_content()
                 
                 res.append(code)
                 res.append(_type)
@@ -88,4 +97,4 @@ def _parseTitle(text: str) -> str:
 
 
 if __name__ == "__main__":
-    print(getResultByCode("20240"))
+    print(getResultByCode("34190"))

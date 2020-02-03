@@ -4,7 +4,7 @@ from collections import defaultdict
 
 '''
 Saves email and its selected course code.
-Database is manipulated as Python dict.
+Database is implemented as Python dict.
 '''
 
 DATABASE_FILE = "database.pkl"
